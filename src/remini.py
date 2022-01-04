@@ -54,6 +54,8 @@ class Remini(object):
         return res
 
     def login(self, uid, pwd):
+        global seq
+
         url='/login/login_module.php'
         payload = {
             'return_url': 'http://shop.eweiqi.com/api/eweiqi.php?returnuri=http%3A%2F%2Fwww.eweiqi.com%2F',
@@ -69,9 +71,14 @@ class Remini(object):
         url = request_api.group(0)
         result = re.search(r'密码错误', self.http.hb_get(url).text)
 
-        print(f'{pwd:>14s}: {"YES" if result is None else "NO"}')
+        seq += 1
+
+        print(f'{seq:04d} {pwd:>20s}: {"YES" if result is None else "NO"}')
 
 if __name__ == "__main__":
+    # for counting
+    seq = 0
+
     r = Remini()
 
     home = os.path.expanduser('~')
