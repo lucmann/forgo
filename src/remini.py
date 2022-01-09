@@ -4,7 +4,6 @@ import os
 import re
 import hashlib
 import logging
-from itertools import combinations
 from xml.etree import ElementTree
 import sys
 import time
@@ -72,8 +71,11 @@ class Remini(object):
         result = re.search(r'密码错误', self.http.hb_get(url).text)
 
         seq += 1
+        ret = True if result is None else False
 
-        print(f'{seq:04d} {pwd:>20s}: {"YES" if result is None else "NO"}')
+        print(f'{seq:04d} {pwd:>20s}: {ret}')
+        return ret
+
 
 if __name__ == "__main__":
     # for counting
@@ -82,14 +84,18 @@ if __name__ == "__main__":
     r = Remini()
 
     home = os.path.expanduser('~')
-    with open(os.path.join(home, 'potential_passwords.txt'), 'r') as f:
-        while True:
-            line = f.readline()
-            if len(line) == 0:
-                break
+    with open(os.path.join(home, 'potential_passwords.txt'), 'r+') as f:
+        passwords = f.readlines()
 
-            if line.startswith('#'):
+        for password in passwords:
+            if password.startswith('#'):
                 continue
 
-            password = line.strip('\n')
-            r.login('ChanningMa', password)
+            password = password.strip('\n')
+
+            if r.login('ChanningMa', password):
+                break
+            else:
+                password = "# " + password
+
+        f.writelines(passwords)

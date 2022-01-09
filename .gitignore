@@ -1,5 +1,6 @@
 # Jetbrains Project directory
 .idea
+gen_potential_passwords.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
